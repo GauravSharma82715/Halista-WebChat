@@ -1,0 +1,121 @@
+@import "tailwindcss";
+
+@layer utilities {
+  /* Soft lavender custom scrollbar */
+  .custom-scroll::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  .custom-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scroll::-webkit-scrollbar-thumb {
+    background: rgba(195, 201, 225, 0.7);
+    border-radius: 9999px;
+  }
+  .custom-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(160, 168, 205, 1);
+  }
+
+  /* Soft card style */
+  .chat-card {
+    background: #FFFFFF;
+    border: 1px solid rgba(230, 233, 245, 0.8);
+  }
+
+  /* Active chat card lavender */
+  .active-chat-card {
+    background: #EDEFFC;
+  }
+
+  /* Squircle avatar gradient backgrounds */
+  .avatar-color-0 { background: #222226; color: #FFFFFF; }
+  .avatar-color-1 { background: #D97746; color: #FFFFFF; }
+  .avatar-color-2 { background: #3B7E8C; color: #FFFFFF; }
+  .avatar-color-3 { background: #B38642; color: #FFFFFF; }
+  .avatar-color-4 { background: #C85250; color: #FFFFFF; }
+  .avatar-color-5 { background: #5B50E6; color: #FFFFFF; }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Invalid Account Animations */
+@keyframes errorShake {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-9px); }
+  30% { transform: translateX(8px); }
+  45% { transform: translateX(-6px); }
+  60% { transform: translateX(5px); }
+  75% { transform: translateX(-3px); }
+  90% { transform: translateX(2px); }
+}
+
+.animate-error-shake {
+  animation: errorShake 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes pulseRedGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4), 0 2px 10px rgba(239, 68, 68, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.25), 0 4px 18px rgba(239, 68, 68, 0.35);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulseRedGlow 1.4s ease-in-out infinite;
+}
+
+@keyframes popInSpring {
+  0% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(2px) scale(1.01);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-pop-in {
+  animation: popInSpring 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes iconWiggle {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-14deg) scale(1.12); }
+  50% { transform: rotate(14deg) scale(1.12); }
+  75% { transform: rotate(-8deg) scale(1.05); }
+}
+
+.animate-icon-wiggle {
+  animation: iconWiggle 0.6s ease-in-out infinite;
+}
+
+@keyframes floatGently {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+.animate-float-gently {
+  animation: floatGently 3s ease-in-out infinite;
+}
+
