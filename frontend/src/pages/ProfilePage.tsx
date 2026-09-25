@@ -17,7 +17,7 @@ import {
   User,
   X,
 } from "lucide-react";
-import { useAppData, user_service } from "../context/AppContext";
+import { useAppData, user_service, getToken, saveToken } from "../context/AppContext";
 import Loading from "../components/Loading";
 
 const ProfilePage = () => {
@@ -122,7 +122,7 @@ const ProfilePage = () => {
     }
 
     setSubmitting(true);
-    const token = Cookies.get("token");
+    const token = getToken();
     try {
       const { data } = await axios.post(
         `${user_service}/api/v1/update/user`,
@@ -134,11 +134,7 @@ const ProfilePage = () => {
         }
       );
 
-      Cookies.set("token", data.token, {
-        expires: 15,
-        secure: false,
-        path: "/",
-      });
+      saveToken(data.token);
 
       toast.success("Profile updated successfully!");
       setUser(data.user);

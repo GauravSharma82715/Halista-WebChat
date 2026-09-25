@@ -16,7 +16,7 @@ import {
   User,
   CheckCircle2,
 } from "lucide-react";
-import { useAppData, user_service } from "../context/AppContext";
+import { useAppData, user_service, saveToken } from "../context/AppContext";
 import Loading from "../components/Loading";
 
 const LoginPage: React.FC = () => {
@@ -29,7 +29,7 @@ const LoginPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const navigate = useNavigate();
-  const { isAuth, loading: userLoading, fetchUser } = useAppData();
+  const { isAuth, loading: userLoading, fetchUser, setAuthData, setIsAuth } = useAppData();
 
   if (userLoading) return <Loading />;
   if (isAuth) return <Navigate to="/chat" replace />;
@@ -75,11 +75,15 @@ const LoginPage: React.FC = () => {
       const { data } = await axios.post(endpoint, payload);
 
       if (data.token) {
-        // Save token in cookie (15 days expiry)
-        Cookies.set("token", data.token, { expires: 15 });
+        saveToken(data.token);
+        if (data.user) {
+          setAuthData(data.user, data.token);
+        } else {
+          setIsAuth(true);
+        }
         toast.success(data.message || (isSignUp ? "Account created!" : "Welcome back!"));
-        await fetchUser();
         navigate("/chat", { replace: true });
+        fetchUser(data.token);
       } else {
         toast.error("Authentication failed. Please try again.");
       }

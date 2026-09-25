@@ -42,14 +42,46 @@ export interface Chats {
   chat: Chat;
 }
 
+export const getToken = (): string => {
+  try {
+    return localStorage.getItem("token") || Cookies.get("token") || "";
+  } catch (e) {
+    return Cookies.get("token") || "";
+  }
+};
+
+export const saveToken = (token: string) => {
+  try {
+    localStorage.setItem("token", token);
+  } catch (e) {}
+  try {
+    Cookies.set("token", token, {
+      expires: 15,
+      sameSite: "lax",
+      secure: window.location.protocol === "https:",
+      path: "/",
+    });
+  } catch (e) {}
+};
+
+export const clearToken = () => {
+  try {
+    localStorage.removeItem("token");
+  } catch (e) {}
+  try {
+    Cookies.remove("token");
+  } catch (e) {}
+};
+
 interface AppContextType {
   user: User | null;
   loading: boolean;
   isAuth: boolean;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   setIsAuth: React.Dispatch<React.SetStateAction<boolean>>;
+  setAuthData: (user: User, token: string) => void;
   logoutUser: () => Promise<void>;
-  fetchUser: () => Promise<void>;
+  fetchUser: (tokenOverride?: string) => Promise<void>;
   fetchUsers: () => Promise<void>;
   fetchChats: () => Promise<void>;
   chats: Chats[] | null;
@@ -68,11 +100,20 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [isAuth, setIsAuth] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  async function fetchUser() {
+  const setAuthData = (userData: User, token: string) => {
+    saveToken(token);
+    setUser(userData);
+    setIsAuth(true);
+    setLoading(false);
+  };
+
+  async function fetchUser(tokenOverride?: string) {
     try {
-      const token = Cookies.get("token");
+      const token = tokenOverride || getToken();
       if (!token) {
         setLoading(false);
+        setIsAuth(false);
+        setUser(null);
         return;
       }
 
@@ -94,7 +135,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   }
 
   async function logoutUser() {
-    Cookies.remove("token");
+    clearToken();
     setUser(null);
     setIsAuth(false);
     toast.success("User Logged Out");
@@ -102,7 +143,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   const [chats, setChats] = useState<Chats[] | null>(null);
   async function fetchChats() {
-    const token = Cookies.get("token");
+    const token = getToken();
     if (!token) return;
     try {
       const { data } = await axios.get(`${chat_service}/api/v1/chat/all`, {
@@ -120,7 +161,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [users, setUsers] = useState<User[] | null>(null);
 
   async function fetchUsers() {
-    const token = Cookies.get("token");
+    const token = getToken();
     if (!token) return;
 
     try {
@@ -138,8 +179,6 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   useEffect(() => {
     fetchUser();
-    fetchChats();
-    fetchUsers();
   }, []);
 
   return (
@@ -149,6 +188,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         setUser,
         isAuth,
         setIsAuth,
+        setAuthData,
         loading,
         logoutUser,
         fetchUser,

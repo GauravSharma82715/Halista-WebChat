@@ -10,7 +10,7 @@ import ChatMessages from "../components/ChatMessages";
 import MessageInput from "../components/MessageInput";
 import Loading from "../components/Loading";
 
-import { chat_service, useAppData, User } from "../context/AppContext";
+import { chat_service, useAppData, User, getToken } from "../context/AppContext";
 import { SocketData } from "../context/SocketContext";
 
 export interface Message {
@@ -74,7 +74,7 @@ const ChatPage = () => {
   const handleLogout = () => logoutUser();
 
   async function fetchChat() {
-    const token = Cookies.get("token");
+    const token = getToken();
     if (!selectedUser || !token) return;
 
     try {
@@ -162,7 +162,7 @@ const ChatPage = () => {
 
   async function createChat(u: User) {
     try {
-      const token = Cookies.get("token");
+      const token = getToken();
       const { data } = await axios.post(
         `${chat_service}/api/v1/chat/new`,
         {
@@ -201,7 +201,7 @@ const ChatPage = () => {
       receiverId: user?._id,
     });
 
-    const token = Cookies.get("token");
+    const token = getToken();
 
     try {
       const formData = new FormData();
@@ -257,7 +257,7 @@ const ChatPage = () => {
 
   // CRUD: Update / Edit a message
   const handleUpdateMessage = async (messageId: string, newText: string) => {
-    const token = Cookies.get("token");
+    const token = getToken();
     if (!token) return;
 
     try {
@@ -285,7 +285,7 @@ const ChatPage = () => {
 
   // CRUD: Delete a message
   const handleDeleteMessage = async (messageId: string) => {
-    const token = Cookies.get("token");
+    const token = getToken();
     if (!token) return;
 
     try {
@@ -308,7 +308,7 @@ const ChatPage = () => {
   // CRUD: Delete entire conversation
   const handleDeleteChat = async () => {
     if (!selectedUser) return;
-    const token = Cookies.get("token");
+    const token = getToken();
     if (!token) return;
 
     try {
