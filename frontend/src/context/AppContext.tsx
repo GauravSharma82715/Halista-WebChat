@@ -9,8 +9,13 @@ import Cookies from "js-cookie";
 import axios from "axios";
 import toast, { Toaster } from "react-hot-toast";
 
-export const user_service = "http://localhost:5000";
-export const chat_service = "http://localhost:5000";
+const rawBackendUrl =
+  (import.meta.env.VITE_BACKEND_URL as string) ||
+  (import.meta.env.VITE_API_URL as string) ||
+  "http://localhost:5000";
+
+export const user_service = rawBackendUrl.replace(/\/+$/, "");
+export const chat_service = rawBackendUrl.replace(/\/+$/, "");
 
 export interface User {
   _id: string;
